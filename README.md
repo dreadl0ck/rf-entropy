@@ -48,6 +48,41 @@ test
     9004+0 records out
     4610048 bytes (4.6 MB) copied, 13.294 s, 347 kB/s
 
+Choose frequency:
+
+    entropy_rtl -b -f 74.8M
+
+Fetch data:
+
+    # tail -f /run/rtl_entropy.fifo | dd of=random.img bs=1 count=512000000 iflag=fullblock
+    339486772 bytes (339 MB, 324 MiB) copied, 1170 s, 290 kB/s
+
+    511915211 bytes (512 MB, 488 MiB) copied, 1763 s, 290 kB/s
+    512000000+0 records in
+    512000000+0 records out
+    512000000 bytes (512 MB, 488 MiB) copied, 1763.26 s, 290 kB/s
+    
+RNG test:
+    
+    # rngtest < random.img 
+    rngtest 5
+    Copyright (c) 2004 by Henrique de Moraes Holschuh
+    This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+    rngtest: starting FIPS tests...
+    rngtest: entropy source drained
+    rngtest: bits received from input: 4096000000
+    rngtest: FIPS 140-2 successes: 204646
+    rngtest: FIPS 140-2 failures: 153
+    rngtest: FIPS 140-2(2001-10-10) Monobit: 23
+    rngtest: FIPS 140-2(2001-10-10) Poker: 18
+    rngtest: FIPS 140-2(2001-10-10) Runs: 48
+    rngtest: FIPS 140-2(2001-10-10) Long run: 64
+    rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+    rngtest: input channel speed: (min=229.801; avg=19894.427; max=19073.486)Mibits/s
+    rngtest: FIPS tests speed: (min=19.150; avg=181.189; max=186.995)Mibits/s
+    rngtest: Program run time: 21768269 microseconds
+
 ## Generate Entropy
 
 https://pthree.org/2015/06/16/hardware-rng-through-an-rtl-sdr-dongle/
