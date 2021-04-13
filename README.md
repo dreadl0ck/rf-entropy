@@ -118,6 +118,11 @@ DieHarder test suite:
      marsaglia_tsang_gcd|   0|  10000000|     100|0.67098980|  PASSED  
              sts_monobit|   1|    100000|     100|0.51172956|  PASSED  
                 sts_runs|   2|    100000|     100|0.21252793|  PASSED 
+    
+    Preparing to run test 207.  ntuple = 0
+    Preparing to run test 208.  ntuple = 0
+    Preparing to run test 209.  ntuple = 0
+
 
 ## Generate Entropy
 
