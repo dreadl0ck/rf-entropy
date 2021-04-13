@@ -55,14 +55,81 @@ test
     9004+0 records out
     4610048 bytes (4.6 MB) copied, 13.294 s, 347 kB/s
 
+
+Choose frequency:
+
+    entropy_rtl -b -f 74.8M
+
 Fetch 512MB of data:
 
-    tail -f /run/rtl_entropy.fifo | dd of=random.img bs=1 count=512000000 iflag=fullblock
-    ...
+    # tail -f /run/rtl_entropy.fifo | dd of=random.img bs=1 count=512000000 iflag=fullblock
+    339486772 bytes (339 MB, 324 MiB) copied, 1170 s, 290 kB/s
 
-test:
+    511915211 bytes (512 MB, 488 MiB) copied, 1763 s, 290 kB/s
+    512000000+0 records in
+    512000000+0 records out
+    512000000 bytes (512 MB, 488 MiB) copied, 1763.26 s, 290 kB/s
+    
+RNG test:
+    
+    # rngtest < random.img 
+    rngtest 5
+    Copyright (c) 2004 by Henrique de Moraes Holschuh
+    This is free software; see the source for copying conditions.  There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
-    rngtest < random.img
+    rngtest: starting FIPS tests...
+    rngtest: entropy source drained
+    rngtest: bits received from input: 4096000000
+    rngtest: FIPS 140-2 successes: 204646
+    rngtest: FIPS 140-2 failures: 153
+    rngtest: FIPS 140-2(2001-10-10) Monobit: 23
+    rngtest: FIPS 140-2(2001-10-10) Poker: 18
+    rngtest: FIPS 140-2(2001-10-10) Runs: 48
+    rngtest: FIPS 140-2(2001-10-10) Long run: 64
+    rngtest: FIPS 140-2(2001-10-10) Continuous run: 0
+    rngtest: input channel speed: (min=229.801; avg=19894.427; max=19073.486)Mibits/s
+    rngtest: FIPS tests speed: (min=19.150; avg=181.189; max=186.995)Mibits/s
+    rngtest: Program run time: 21768269 microseconds
+
+DieHarder test suite:
+
+    #dieharder -a < random.img 
+    #=============================================================================#
+    #            dieharder version 3.31.1 Copyright 2003 Robert G. Brown          #
+    #=============================================================================#
+       rng_name    |rands/second|   Seed   |
+            mt19937|  1.22e+08  | 904524014|
+    #=============================================================================#
+            test_name   |ntup| tsamples |psamples|  p-value |Assessment
+    #=============================================================================#
+       diehard_birthdays|   0|       100|     100|0.44405096|  PASSED  
+          diehard_operm5|   0|   1000000|     100|0.72574609|  PASSED  
+      diehard_rank_32x32|   0|     40000|     100|0.83826473|  PASSED  
+        diehard_rank_6x8|   0|    100000|     100|0.75883616|  PASSED  
+       diehard_bitstream|   0|   2097152|     100|0.52521521|  PASSED  
+            diehard_opso|   0|   2097152|     100|0.54327546|  PASSED  
+            diehard_oqso|   0|   2097152|     100|0.63433709|  PASSED  
+             diehard_dna|   0|   2097152|     100|0.38572275|  PASSED  
+    diehard_count_1s_str|   0|    256000|     100|0.48686044|  PASSED  
+    diehard_count_1s_byt|   0|    256000|     100|0.50349216|  PASSED  
+     diehard_parking_lot|   0|     12000|     100|0.22547510|  PASSED  
+        diehard_2dsphere|   2|      8000|     100|0.86305985|  PASSED  
+        diehard_3dsphere|   3|      4000|     100|0.00479805|   WEAK   
+         diehard_squeeze|   0|    100000|     100|0.78316946|  PASSED  
+            diehard_sums|   0|       100|     100|0.13007386|  PASSED  
+            diehard_runs|   0|    100000|     100|0.62865098|  PASSED  
+            diehard_runs|   0|    100000|     100|0.13647343|  PASSED  
+           diehard_craps|   0|    200000|     100|0.96350555|  PASSED  
+           diehard_craps|   0|    200000|     100|0.87759170|  PASSED  
+     marsaglia_tsang_gcd|   0|  10000000|     100|0.18253008|  PASSED  
+     marsaglia_tsang_gcd|   0|  10000000|     100|0.67098980|  PASSED  
+             sts_monobit|   1|    100000|     100|0.51172956|  PASSED  
+                sts_runs|   2|    100000|     100|0.21252793|  PASSED 
+    
+    Preparing to run test 207.  ntuple = 0
+    Preparing to run test 208.  ntuple = 0
+    Preparing to run test 209.  ntuple = 0
+
 
 ## Generate Entropy
 
