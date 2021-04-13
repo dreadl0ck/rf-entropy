@@ -48,6 +48,15 @@ test
     9004+0 records out
     4610048 bytes (4.6 MB) copied, 13.294 s, 347 kB/s
 
+Fetch 512MB of data:
+
+    tail -f /run/rtl_entropy.fifo | dd of=random.img bs=1 count=512000000 iflag=fullblock
+    ...
+
+test:
+
+    rngtest < random.img
+
 ## Generate Entropy
 
 https://pthree.org/2015/06/16/hardware-rng-through-an-rtl-sdr-dongle/
