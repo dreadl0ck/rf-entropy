@@ -139,3 +139,11 @@ https://pthree.org/2015/06/16/hardware-rng-through-an-rtl-sdr-dongle/
 ## validate
 
 https://en.wikipedia.org/wiki/FIPS_140-2
+
+## create 1MB file containing 0xFF
+for i in {1..1000}; do printf "\x$(printf %x 255)"; done > temp.bin
+for i in {1..1000}; do cat temp.bin >> filetosend.bin; done
+
+## HackRF send data
+for i in {1..3}; do hackrf_transfer -t filetosend.bin -f 433920000; done
+
