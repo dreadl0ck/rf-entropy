@@ -123,6 +123,7 @@ DieHarder test suite:
     Preparing to run test 208.  ntuple = 0
     Preparing to run test 209.  ntuple = 0
 
+> Note: In a consequtive run on the same data, the WEAK test passed. Why?
 
 ## Generate Entropy
 
