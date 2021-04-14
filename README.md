@@ -1,5 +1,12 @@
 # rf-entropy
 
+Our receiver:
+
+    officially: 48.25-863.25 Mhz
+    tested for: 24 - 1766 MHz
+
+http://www.giga.co.za/ocart/index.php?route=product/product&product_id=52
+
 RF entropy experiments for random number generation
 
 Install deps:
