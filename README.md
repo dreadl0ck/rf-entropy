@@ -136,6 +136,12 @@ DieHarder test suite:
 
 https://pthree.org/2015/06/16/hardware-rng-through-an-rtl-sdr-dongle/
 
+## Capture raw data:
+
+http://www.aaronscher.com/wireless_com_SDR/RTL_SDR_AM_spectrum_demod.html
+
+e.g.: rtl_sdr -f 433920000 -g 10 -s 2500000 -n 25000000 random.bin
+
 ## validate
 
 https://en.wikipedia.org/wiki/FIPS_140-2
