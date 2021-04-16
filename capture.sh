@@ -30,4 +30,7 @@ for (( COUNTER=$start; COUNTER<=$end; COUNTER+=$step )); do
 
     # kill via signal after sleep duration
     kill -INT $(pgrep hackrf_transfer)
+
+    # give hackrf some time to close handles
+    sleep 1
 done

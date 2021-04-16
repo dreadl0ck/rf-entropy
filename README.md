@@ -154,3 +154,13 @@ for i in {1..1000}; do cat temp.bin >> filetosend.bin; done
 ## HackRF send data
 for i in {1..3}; do hackrf_transfer -t filetosend.bin -f 433920000; done
 
+# Frequencies
+
+- 95 MHz (FM)
+- 145.80 MHz (ISS)
+- 433 MHz (Amateur)
+- 790 MHz (MFCN, PPDR)
+- 862 MHz
+- 1300 MHz (Aeronautical)
+- 1559 MHz (GNSS: Glonass, Galileo)
+- 2200 MHz (Space research, Radio Astronomy)
