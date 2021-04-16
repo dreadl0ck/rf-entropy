@@ -147,12 +147,18 @@ e.g.: rtl_sdr -f 433920000 -g 10 -s 2500000 -n 25000000 random.bin
 https://en.wikipedia.org/wiki/FIPS_140-2
 
 ## create 1MB file containing 0xFF
-for i in {1..1000}; do printf "\x$(printf %x 255)"; done > temp.bin
 
-for i in {1..1000}; do cat temp.bin >> filetosend.bin; done
+    for i in {1..1000}; do printf "\x$(printf %x 255)"; done > temp.bin
+
+    for i in {1..1000}; do cat temp.bin >> filetosend.bin; done
 
 ## HackRF send data
-for i in {1..3}; do hackrf_transfer -t filetosend.bin -f 433920000; done
+
+    for i in {1..3}; do hackrf_transfer -t filetosend.bin -f 433920000; done
+
+## Run Von Neumann Debiasing
+
+    go run debias.go
 
 # Frequencies
 

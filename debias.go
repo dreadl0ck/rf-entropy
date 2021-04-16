@@ -90,9 +90,7 @@ func debiasData(data []byte) bytes.Buffer {
 				buf.WriteByte(ob)
 				ob = byte(0)
 			}
-		} 
-
-		fmt.Println("bitcount", bitcount)
+		}
 		
 		if debug {
 			time.Sleep(1 * time.Second)
