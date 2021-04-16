@@ -2,6 +2,7 @@ package main
 
 import (
 	"bytes"
+	"flag"
 	"fmt"
 	"io/fs"
 	"io/ioutil"
@@ -12,13 +13,15 @@ import (
 )
 
 var (
-	debug = false
-	path = "samples-rtl"
+	debug = flag.Bool("d", false, "toggle debug mode")
+	flagPath = flag.String("p", "samples-rtl", "path with test data files")
 )
 
 func main() {
+
+	flag.Parse()
 	
-	files, err := ioutil.ReadDir(path)
+	files, err := ioutil.ReadDir(*flagPath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -29,7 +32,7 @@ func main() {
 			continue
 		}
 		
-		file := filepath.Join(path, f.Name())
+		file := filepath.Join(*flagPath, f.Name())
 		fmt.Println("processing", file)
 		
 		debiasFile(file, f)
@@ -49,7 +52,7 @@ func debiasData(data []byte) bytes.Buffer {
 
 	for _, b := range data {
 
-		if debug {
+		if *debug {
 			fmt.Printf("byte: %08b\n", b)
 		}
 	
@@ -61,29 +64,29 @@ func debiasData(data []byte) bytes.Buffer {
 			ch := (b >> (7-j)) & 0x01
 			ch2 := (b >> (7-(j+1))) & 0x01
 			
-			if debug {
+			if *debug {
 				fmt.Println(ch, ch2)
 			}
 			
 			if (ch != ch2) {
 			
 				if ch == 1 {
-					/* store a 1 in our bitbuffer */
+					// store a 1 in our bitbuffer
 					ob = setBit(ob, 7-bitcount)
 
-					if debug {
+					if *debug {
 						fmt.Printf("collecting 1, out byte: %08b\n", ob)
 					}
-				} /* else, leave the buffer alone, it's already 0 at this bit */
+				} // else: leave the buffer alone, it's already 0 at this bit
 				
 				bitcount++
 			}
 
-			/* is byte full? */
+			// is the byte full?
 			if bitcount == 8 {
 				bitcount = 0
 				
-				if debug {
+				if *debug {
 					fmt.Printf("out byte: %08b\n", ob)
 				}
 				
@@ -92,7 +95,7 @@ func debiasData(data []byte) bytes.Buffer {
 			}
 		}
 		
-		if debug {
+		if *debug {
 			time.Sleep(1 * time.Second)
 		}
 	}
@@ -115,7 +118,7 @@ func debiasFile(file string, finfo fs.FileInfo) {
 
 	buf := debiasData(data)
 
-	out := filepath.Join(path, finfo.Name() + "-debiased.bin")
+	out := filepath.Join(*flagPath, finfo.Name() + "-debiased.bin")
 	f, err := os.Create(out)
 	if err != nil {
 		log.Fatal(err)
