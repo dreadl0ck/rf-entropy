@@ -17,7 +17,6 @@ func (b bitString) AsByteSlice() []byte {
     var str string
 
     for i := len(b); i > 0; i -= 8 {
-	//for i := 0; i < len(b); i += 8 {
         if i-8 < 0 {
             str = string(b[0:i])
         } else {
@@ -29,17 +28,9 @@ func (b bitString) AsByteSlice() []byte {
         }
         out = append([]byte{byte(v)}, out...)
     }
-	//reverseAny(out)
+
     return out
 }
-
-// func reverseAny(s interface{}) {
-//     n := reflect.ValueOf(s).Len()
-//     swap := reflect.Swapper(s)
-//     for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
-//         swap(i, j)
-//     }
-// }
 
 func (b bitString) AsHexSlice() []string {
     var out []string
