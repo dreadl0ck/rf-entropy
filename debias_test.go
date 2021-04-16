@@ -153,7 +153,6 @@ func TestNew(t *testing.T) {
 			fmt.Println("input size", strconv.Itoa(len(te.in)) + " bits")
 			fmt.Println("output size", strconv.Itoa(len(te.out)) + " bits")
 			fmt.Println("======================= DEBUG ========================")
-			debug = true
 			debiasData(bitString(te.in).AsByteSlice())
 			fmt.Println("======================= DEBUG ========================")
 			t.Fatal("test #", i, ": expected " + te.out + " (" + strconv.Itoa(len(te.out)) + " bits) but got " + fmt.Sprintf("%08b", buf.Bytes()) + " (" + strconv.Itoa(len(buf.Bytes()) * 8) + " bits)")
