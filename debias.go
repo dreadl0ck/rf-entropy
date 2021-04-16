@@ -13,7 +13,7 @@ import (
 
 var (
 	debug = false
-	path = "samples"
+	path = "samples-rtl"
 )
 
 func main() {
@@ -36,6 +36,10 @@ func main() {
 	}
 }
 
+// The algorithm works on pairs of bits, and produces output as follows:
+// - If the input is "00" or "11", the input is discarded (no output).
+// - If the input is "10", output a "1".
+// - If the input is "01", output a "0".
 func debiasData(data []byte) bytes.Buffer {
 	var (
 		buf bytes.Buffer
@@ -51,18 +55,21 @@ func debiasData(data []byte) bytes.Buffer {
 	
 		for j:=0; j<8; j+= 2 {
 
-			ch := (b >> j) & 0x01
-			ch2 := (b >> (j+1)) & 0x01
-
+			// fmt.Printf(" ===> b: %08b, j: %d, b >> j  : %08b, (b >> j) & 0x01: %08b \n", b, j, b >> j, (b >> j) & 0x01)
+			// fmt.Printf(" ===> b: %08b, j: %d, b >> j+1: %08b, (b >> j+1) & 0x01: %08b \n", b, j, b >> j+1, (b >> j+1) & 0x01)
+			
+			ch := (b >> (7-j)) & 0x01
+			ch2 := (b >> (7-(j+1))) & 0x01
+			
 			if debug {
 				fmt.Println(ch, ch2)
 			}
 			
 			if (ch != ch2) {
 			
-				if ch != 1 {
+				if ch == 1 {
 					/* store a 1 in our bitbuffer */
-					ob = setBit(ob, bitcount)
+					ob = setBit(ob, 7-bitcount)
 
 					if debug {
 						fmt.Printf("collecting 1, out byte: %08b\n", ob)
@@ -71,33 +78,42 @@ func debiasData(data []byte) bytes.Buffer {
 				
 				bitcount++
 			}
+
+			/* is byte full? */
+			if bitcount == 8 {
+				bitcount = 0
+				
+				if debug {
+					fmt.Printf("out byte: %08b\n", ob)
+				}
+				
+				buf.WriteByte(ob)
+				ob = byte(0)
+			}
 		} 
 
-		/* is byte full? */
-		if bitcount == 8 {
-			bitcount = 0
-			
-			if debug {
-				fmt.Printf("out byte: %08b\n", ob)
-			}
-			
-			buf.WriteByte(ob)
-			ob = byte(0)
-		}
+		fmt.Println("bitcount", bitcount)
 		
 		if debug {
 			time.Sleep(1 * time.Second)
 		}
 	}
 
+	// write leftover
+	buf.WriteByte(ob)
+
 	return buf
 }
 
 func debiasFile(file string, finfo fs.FileInfo) {
+
+	start := time.Now()
+	
 	data, err := ioutil.ReadFile(file)
 	if err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println("read", len(data), "bytes from file", file)
 
 	buf := debiasData(data)
 
@@ -112,7 +128,7 @@ func debiasFile(file string, finfo fs.FileInfo) {
 		log.Fatal(err)
 	}
 
-	fmt.Println("wrote", n, "bytes to output file", out)
+	fmt.Println("wrote", n, "bytes to output file", out, "in", time.Since(start))
 
 	err = f.Close()
 	if err != nil {

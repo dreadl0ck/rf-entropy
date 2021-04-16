@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"strconv"
 	"testing"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 type bitString string
@@ -15,6 +17,7 @@ func (b bitString) AsByteSlice() []byte {
     var str string
 
     for i := len(b); i > 0; i -= 8 {
+	//for i := 0; i < len(b); i += 8 {
         if i-8 < 0 {
             str = string(b[0:i])
         } else {
@@ -22,12 +25,21 @@ func (b bitString) AsByteSlice() []byte {
         }
         v, err := strconv.ParseUint(str, 2, 8)
         if err != nil {
-            panic(err)
+            return nil
         }
         out = append([]byte{byte(v)}, out...)
     }
+	//reverseAny(out)
     return out
 }
+
+// func reverseAny(s interface{}) {
+//     n := reflect.ValueOf(s).Len()
+//     swap := reflect.Swapper(s)
+//     for i, j := 0, n-1; i < j; i, j = i+1, j-1 {
+//         swap(i, j)
+//     }
+// }
 
 func (b bitString) AsHexSlice() []string {
     var out []string
@@ -53,35 +65,124 @@ func TestBitStringConversion(t *testing.T) {
 	}
 }
 
-func TestVonNeumannDebiasing(t *testing.T) {
+// IMPORTANT: both input and output bit strings have to be a multiple of eight!!
+type test struct {
+	in string
+	out string
+}
 
-	// 0 to 0000000000000000000 (steps of one) --> nothing
-	buf := debiasData(bitString("0000000000000000000").AsByteSlice())
-	if len(buf.Bytes()) != 0 {
-		fmt.Printf("%08b", buf.Bytes())
-		t.Fatal("expected no output")
+var tests = []test{
+	{
+		// 0 to 0000000000000000000 (steps of one) --> nothing
+		in: "0000000000000000000",
+		out: "",
+	},
+	{
+		// 1 to 1111111111111111111 (steps of one) --> nothing
+		in: "1111111111111111111",
+		out: "",
+	},
+	{
+		// 01 to 01010101 01010101 (steps of two) --> all zeros * 1/2 input length
+		in: "0101010101010101",
+		out: "00000000",
+	},
+	{
+		// 10 to 10101010 10101010 (steps of two) --> all ones * 1/2 input length
+		in: "1010101010101010",
+		out: "11111111",
+	},
+	{
+		in: "01101010110011111101100010100110",
+		out: "0111011101000000", // contains padding with 6 trailing zeroes because Go's buffers can only hold full bytes.
+	},
+	{	
+		in: "01001011001100100001011010100001",
+		out: "0110011100000000", // seven trailing zeroes for padding
+	},
+	{	
+		in: "00111110101000110000100001100011",
+		out: "11110100", // two trailing zeroes for padding
+	},
+	
+	{	
+		in: "00111110101000110000100001100011",
+		out: "11110100", // two trailing zeroes for padding
+	},
+	{	
+		in: "01001000100100110001101001101101",
+		out: "0110011010000000", // six trailing zeroes for padding
+	},
+	{	
+		in: "00111111110011010011100011110011",
+		out: "01000000", // six trailing zeroes for padding
+	},
+	{	
+		in: "10110101011001111110110001010011",
+		out: "1000101000000000", // six trailing zeroes for padding
+	},
+	{	
+		in: "01100101100110010000101101010000",
+		out: "0100101010000000", // five trailing zeroes for padding
+	},
+	{	
+		in: "10011111010100011000010000110001",
+		out: "10000100",
+	},
+	{	
+		in: "01100100010010011000110100110110",
+		out: "0100101001000000", // six trailing zeroes for padding
+	},
+	{	
+		in: "10011111111001101001110001111001",
+		out: "1010110010000000", // six trailing zeroes for padding
+	},
+}
+
+func TestNew(t *testing.T) {
+	for i, te := range tests {
+
+		buf := debiasData(bitString(te.in).AsByteSlice())
+				
+		if !bytes.HasPrefix(buf.Bytes(), bitString(te.out).AsByteSlice()) {
+
+			fmt.Printf("buf.Bytes(): %08b\n", buf.Bytes())
+			fmt.Printf("bitString(te.out).AsByteSlice(): %08b\n", bitString(te.out).AsByteSlice())
+
+			spew.Dump(tests[i])
+			fmt.Println("input size", strconv.Itoa(len(te.in)) + " bits")
+			fmt.Println("output size", strconv.Itoa(len(te.out)) + " bits")
+			fmt.Println("======================= DEBUG ========================")
+			debug = true
+			debiasData(bitString(te.in).AsByteSlice())
+			fmt.Println("======================= DEBUG ========================")
+			t.Fatal("test #", i, ": expected " + te.out + " (" + strconv.Itoa(len(te.out)) + " bits) but got " + fmt.Sprintf("%08b", buf.Bytes()) + " (" + strconv.Itoa(len(buf.Bytes()) * 8) + " bits)")
+		}
+	}
+}
+
+func TestIterByte(t *testing.T) {
+	b := byte(216) // 11011000
+
+	values := [][]int{
+		{1, 1},
+		{0, 1},
+		{1, 0},
+		{0, 0},
 	}
 
-	// 1 to 1111111111111111111 (steps of one) --> nothing
-	buf = debiasData(bitString("1111111111111111111").AsByteSlice())
-	if len(buf.Bytes()) != 0 {
-		fmt.Printf("%08b", buf.Bytes())
-		t.Fatal("expected no output")
-	}
+	counter := 0
 
-	debug = true
-
-	// 01 to 01010101 01010101 (steps of two) --> all zeros * 1/2 input length
-	buf = debiasData(bitString("0101010101010101").AsByteSlice())
-	if len(buf.Bytes()) != 1 || !bytes.Equal(buf.Bytes(), []byte{byte(0)}) {
-		fmt.Printf("%08b", buf.Bytes())
-		t.Fatal("expected no output")
-	}
-
-	// 10 to 10101010 10101010 (steps of two) --> all ones * 1/2 input length
-	buf = debiasData(bitString("1010101010101010").AsByteSlice())
-	if len(buf.Bytes()) != 1 || !bytes.Equal(buf.Bytes(), []byte{byte(255)}) {
-		fmt.Printf("%08b", buf.Bytes())
-		t.Fatal("expected no output")
+	for j:=0; j<8; j+= 2 {
+		ch := (b >> (7-j)) & 0x01
+		ch2 := (b >> (7-(j+1))) & 0x01
+		
+		if fmt.Sprint(values[counter][0]) != fmt.Sprint(ch) {
+			t.Fatal("unexpected value")
+		} 
+		if fmt.Sprint(values[counter][1]) != fmt.Sprint(ch2) {
+			t.Fatal("unexpected value")
+		} 
+		counter ++
 	}
 }
