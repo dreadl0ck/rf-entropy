@@ -142,9 +142,15 @@ http://www.aaronscher.com/wireless_com_SDR/RTL_SDR_AM_spectrum_demod.html
 
 e.g.: rtl_sdr -f 433920000 -g 10 -s 2500000 -n 25000000 random.bin
 
-## validate
+## Validate
 
-https://en.wikipedia.org/wiki/FIPS_140-2
+NIST Statistical Test Suite is used for randomness testing. 
+
+Use run_stats.sh to run statistics. Because of the 1000 bitstreams hardcoded in the replacing utilities.c and the supplied streamlength for individual bitstreams in the shell script, the data assessed should be at least 100MB in size.
+
+Reports can be parsed using convert_reports_to_spreadsheet.sh to provide an overview when performing tests on large amounts of input files.
+
+For more information on interpretation of STS results, have a look at the NIST documentation.
 
 ## create 1MB file containing 0xFF
 
