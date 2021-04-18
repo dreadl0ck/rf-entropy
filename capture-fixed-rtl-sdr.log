@@ -1,0 +1,71 @@
+capturing frequency 1000000
+Found 1 device(s):
+  0:  Realtek, RTL2838UHIDIR, SN: 00000001
+
+Using device 0: Generic RTL2832U OEM
+Found Fitipower FC0012 tuner
+Exact sample rate is: 2500000.107620 Hz
+Sampling at 2500000 S/s.
+[FC0012] no valid PLL combination found for 1000000 Hz!
+WARNING: Failed to set center freq.
+Tuner gain set to automatic.
+Reading samples in async mode...
+
+User cancel, exiting...
+
+real	3m20.530s
+user	0m0.181s
+sys	0m2.296s
+capturing frequency 5000000
+Found 1 device(s):
+  0:  Realtek, RTL2838UHIDIR, SN: 00000001
+
+Using device 0: Generic RTL2832U OEM
+Found Fitipower FC0012 tuner
+Exact sample rate is: 2500000.107620 Hz
+Sampling at 2500000 S/s.
+[FC0012] no valid PLL combination found for 5000000 Hz!
+WARNING: Failed to set center freq.
+Tuner gain set to automatic.
+Reading samples in async mode...
+
+User cancel, exiting...
+
+real	3m22.679s
+user	0m0.182s
+sys	0m1.992s
+capturing frequency 10000000
+Found 1 device(s):
+  0:  Realtek, RTL2838UHIDIR, SN: 00000001
+
+Using device 0: Generic RTL2832U OEM
+Found Fitipower FC0012 tuner
+Exact sample rate is: 2500000.107620 Hz
+Sampling at 2500000 S/s.
+[FC0012] no valid PLL combination found for 10000000 Hz!
+WARNING: Failed to set center freq.
+Tuner gain set to automatic.
+Reading samples in async mode...
+
+User cancel, exiting...
+
+real	3m20.620s
+user	0m0.182s
+sys	0m2.445s
+capturing frequency 74000000
+Found 1 device(s):
+  0:  Realtek, RTL2838UHIDIR, SN: 00000001
+
+Using device 0: Generic RTL2832U OEM
+Found Fitipower FC0012 tuner
+Exact sample rate is: 2500000.107620 Hz
+Sampling at 2500000 S/s.
+Tuned to 74000000 Hz.
+Tuner gain set to automatic.
+Reading samples in async mode...
+
+User cancel, exiting...
+
+real	3m20.597s
+user	0m0.223s
+sys	0m2.452s

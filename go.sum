@@ -1,2 +1,10 @@
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=
 github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+github.com/dreadl0ck/debias v0.0.0-20210418104546-b73d8477ef4d h1:u2Q4bjtUjhhbog6EFTD+2C71TiMoTFD2yBkUGRhpk0M=
+github.com/dreadl0ck/debias v0.0.0-20210418104546-b73d8477ef4d/go.mod h1:f5k8Wx8I0rPIuujmMuVOSDLywlMS4gT7t7ERkiZt8Rk=
+github.com/dreadl0ck/debias v0.0.1 h1:o6kdpUEeqDkZ8ALEt+aKqiUTXD7+E/KZB2CCFrdf5X4=
+github.com/dreadl0ck/debias v0.0.1/go.mod h1:f5k8Wx8I0rPIuujmMuVOSDLywlMS4gT7t7ERkiZt8Rk=
+github.com/dreadl0ck/debias v0.1.0 h1:6ekaJ/akMPpQCLq2QGl2qKcZADThD61Rb1xnP+0AaXg=
+github.com/dreadl0ck/debias v0.1.0/go.mod h1:f5k8Wx8I0rPIuujmMuVOSDLywlMS4gT7t7ERkiZt8Rk=
+github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
+github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
