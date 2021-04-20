@@ -158,9 +158,25 @@ For more information on interpretation of STS results, have a look at the NIST d
 
     for i in {1..1000}; do cat temp.bin >> filetosend.bin; done
 
-## HackRF send data
+## Generating interference using HackRF
 
-    for i in {1..3}; do hackrf_transfer -t filetosend.bin -f 433920000; done
+WARNING: Please note that sending on certain frequencies is forbidden by law and/or can cause interfere with and disturb other traffic (close to the) same frequency. For creating a controlled environment that is not letting signals out, a Faraday cage or other RF blocking solution could be considered.
+
+Create 1GB file containing 0xFF:
+
+printf '%.s\xff' {1..10000000} > temp.bin
+
+for i in {1..100}; do cat temp.bin; done > FF.bin
+
+Start sending data. For our setup, the best result was received using high gain, antenna power, RX/TX amplifier, and a sample rate of 4MHz using this command (make sure your antenna length etc. can handle this to prevent damage):
+
+hackrf_transfer -t FF.bin -f [frequency] -x 47 -l 40 -g 42 -p 1 -a 1 -s 4
+
+After starting the HackRF, the rtl_sdr command can be used to check the result of sending interfering data:
+ 
+rtl_sdr -f [frequency]  -s 2500000 -n 50000000 10M_interf_random.bin 
+
+A quick compression of the output gives an indication of the entropy. 
 
 ## Run Von Neumann Debiasing
 
