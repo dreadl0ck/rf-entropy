@@ -8,3 +8,5 @@ github.com/dreadl0ck/debias v0.1.0 h1:6ekaJ/akMPpQCLq2QGl2qKcZADThD61Rb1xnP+0AaX
 github.com/dreadl0ck/debias v0.1.0/go.mod h1:f5k8Wx8I0rPIuujmMuVOSDLywlMS4gT7t7ERkiZt8Rk=
 github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
+github.com/jpoirier/gortlsdr v2.10.0+incompatible h1:y76oRd3I2+hqcFY2uxbKIRsHzVjJm2s06FnB0SHr96M=
+github.com/jpoirier/gortlsdr v2.10.0+incompatible/go.mod h1:RcFRxNvqWDjxbCTkWcmGP4WV0HHSrG1Q0ce0V3TdN6o=
