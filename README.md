@@ -176,3 +176,51 @@ For more information on interpretation of STS results, have a look at the NIST d
 - 1300 MHz (Aeronautical)
 - 1559 MHz (GNSS: Glonass, Galileo)
 - 2200 MHz (Space research, Radio Astronomy)
+
+## rf-entropy tool
+
+Compile
+
+    mkdir bin
+    go build -o bin/rf-entropy cmd/*.go
+
+### Compile and run
+
+Help:
+
+    go run cmd/*.go -h
+        -b int
+            bandwidth (default 1000000)
+        -c int
+                max chunk size (default 1024)
+        -f int
+                set frequency (default 145800000)
+        -g int
+                tuner gain
+        -hex
+                hexdump
+        -k    use kaminsky mode
+        -r int
+                rtl frequency (default 28800000)
+        -s int
+                set sample rate (default 2083334)
+        -t int
+                tuner frequency (default 28800000)
+        -w string
+                write into file
+
+Run Von Neumann at default frequency:
+
+    go run cmd/*.go
+
+Run Von Neumann at specific frequency (eg: 74 MHz):
+
+    go run cmd/*.go -f 74000000
+
+Run Von Neumann and save resulting bytes to file _out.bin_:
+
+    go run cmd/*.go -f 74000000 -w out.bin
+
+Run Kaminsky debiasing:
+
+    go run cmd/*.go -k
