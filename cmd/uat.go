@@ -32,7 +32,7 @@ type UAT struct {
 // read does synchronous specific reads.
 func (u *UAT) read() {
 	defer u.wg.Done()
-	log.Println("Entered UAT read() ...")
+	log.Println("Entered UAT read()")
 
 	var (
 		buf         bytes.Buffer
@@ -46,10 +46,10 @@ func (u *UAT) read() {
 	debias.MaxChunkSize = *flagMaxChunkSize
 
 	if *flagKaminsky {
-		fmt.Println("using Kaminsky debiasing")
+		fmt.Println("Using Kaminsky debiasing")
 		out, _, _ = debias.Kaminsky(&buf, true, int64(debias.MaxChunkSize))
 	} else {
-		fmt.Println("using Von Neumann debiasing")
+		fmt.Println("Using Von Neumann debiasing")
 		out, _, _ = debias.VonNeumann(&buf, true)
 	}
 
@@ -138,10 +138,10 @@ func (u *UAT) read() {
 	for {
 		nRead, err := u.dev.ReadSync(buffer, rtl.DefaultBufLength)
 		if err != nil {
-			logger.Infof("\tReadSync Failed - error: %s\n", err)
+			logger.Infof("ReadSync Failed - error: %s", err)
 			break
 		}
-		// logger.Infof("\tReadSync %d\n", nRead)
+		// logger.Infof("ReadSync %d", nRead)
 		if nRead > 0 {
 
 			// populate buffer
@@ -167,24 +167,24 @@ func (u *UAT) shutdown() {
 // sdrConfig configures the device to 978 MHz UAT channel.
 func (u *UAT) sdrConfig(indexID int) (err error) {
 	if u.dev, err = rtl.Open(indexID); err != nil {
-		logger.Infof("\tUAT Open Failed...\n")
+		logger.Infof("UAT Open Failed...")
 		return
 	}
-	logger.Infof("\tGetTunerType: %s\n", u.dev.GetTunerType())
+	logger.Infof("GetTunerType: %s", u.dev.GetTunerType())
 
 	// ---------- Set Tuner Gain ----------
 	err = u.dev.SetTunerGainMode(true)
 	if err != nil {
 		u.dev.Close()
-		logger.Infof("\tSetTunerGainMode Failed - error: %s\n", err)
+		logger.Infof("SetTunerGainMode Failed - error: %s", err)
 		return
 	}
-	logger.Infof("\tSetTunerGainMode Successful\n")
+	logger.Infof("SetTunerGainMode Successful")
 
 	var tgain = 0
 	gains, err := u.dev.GetTunerGains()
 	if err != nil {
-		logger.Infof("\tGetTunerGains Failed - error: %s\n", err)
+		logger.Infof("GetTunerGains Failed - error: %s", err)
 	} else if len(gains) > 0 {
 		tgain = int(gains[0])
 	}
@@ -194,81 +194,81 @@ func (u *UAT) sdrConfig(indexID int) (err error) {
 		tgain = *flagTunerGain
 	}
 
-	logger.Infof("\tUsing gain: %s\n", tgain)
+	logger.Infof("Using gain: %s", tgain)
 
 	err = u.dev.SetTunerGain(tgain)
 	if err != nil {
 		u.dev.Close()
-		logger.Infof("\tSetTunerGain Failed - error: %s\n", err)
+		logger.Infof("SetTunerGain Failed - error: %s", err)
 		return
 	}
-	logger.Infof("\tSetTunerGain Successful\n")
+	logger.Infof("SetTunerGain Successful")
 
 	// ---------- Get/Set Sample Rate ----------
 	err = u.dev.SetSampleRate(*flagSampleRate)
 	if err != nil {
 		u.dev.Close()
-		logger.Infof("\tSetSampleRate Failed - error: %s\n", err)
+		logger.Infof("SetSampleRate Failed - error: %s", err)
 		return
 	}
-	logger.Info("\tSetSampleRate - rate: %d\n", *flagSampleRate)
-	logger.Infof("\tGetSampleRate: %d\n", u.dev.GetSampleRate())
+	logger.Info("SetSampleRate - rate: %d", *flagSampleRate)
+	logger.Infof("GetSampleRate: %d", u.dev.GetSampleRate())
 
 	// ---------- Get/Set Xtal Freq ----------
 	rtlFreq, tunerFreq, err := u.dev.GetXtalFreq()
 	if err != nil {
 		u.dev.Close()
-		logger.Infof("\tGetXtalFreq Failed - error: %s\n", err)
+		logger.Infof("GetXtalFreq Failed - error: %s", err)
 		return
 	}
-	logger.Infof("\tGetXtalFreq - Rtl: %d, Tuner: %d\n", rtlFreq, tunerFreq)
+	logger.Infof("GetXtalFreq - Rtl: %d, Tuner: %d", rtlFreq, tunerFreq)
 
 	err = u.dev.SetXtalFreq(*flagRTLFreq, *flagTunerFreq)
 	if err != nil {
 		u.dev.Close()
-		logger.Infof("\tSetXtalFreq Failed - error: %s\n", err)
+		logger.Infof("SetXtalFreq Failed - error: %s", err)
 		return
 	}
-	logger.Infof("\tSetXtalFreq - Center freq: %d, Tuner freq: %d\n",
+	logger.Infof("SetXtalFreq - Center freq: %d, Tuner freq: %d",
 		*flagRTLFreq, *flagTunerFreq)
 
 	// ---------- Get/Set Center Freq ----------
 	err = u.dev.SetCenterFreq(*flagFrequency)
 	if err != nil {
 		u.dev.Close()
-		logger.Infof("\tSetCenterFreq Failed, error: %s\n", err)
+		logger.Infof("SetCenterFreq Failed, error: %s", err)
 		return
 	}
-	logger.Infof("\tSetCenterFreq Successful\n")
+	logger.Infof("SetCenterFreq Successful")
 
-	logger.Infof("\tGetCenterFreq: %d\n", u.dev.GetCenterFreq())
+	logger.Infof("GetCenterFreq: %d", u.dev.GetCenterFreq())
 
 	// ---------- Set Bandwidth ----------
-	logger.Infof("\tSetting Bandwidth: %d\n", *flagBandwidth)
+	logger.Infof("Setting Bandwidth: %d", *flagBandwidth)
 	if err = u.dev.SetTunerBw(*flagBandwidth); err != nil {
 		u.dev.Close()
-		logger.Infof("\tSetTunerBw %d Failed, error: %s\n", *flagBandwidth, err)
+		logger.Infof("SetTunerBw %d Failed, error: %s", *flagBandwidth, err)
 		return
 	}
-	logger.Infof("\tSetTunerBw %d Successful\n", *flagBandwidth)
+	logger.Infof("SetTunerBw %d Successful", *flagBandwidth)
 
 	if err = u.dev.ResetBuffer(); err != nil {
 		u.dev.Close()
-		logger.Infof("\tResetBuffer Failed - error: %s\n", err)
+		logger.Infof("ResetBuffer Failed - error: %s", err)
 		return
 	}
-	logger.Infof("\tResetBuffer Successful\n")
+	logger.Infof("ResetBuffer Successful")
 
 	// ---------- Get/Set Freq Correction ----------
 	freqCorr := u.dev.GetFreqCorrection()
-	logger.Infof("\tGetFreqCorrection: %d\n", freqCorr)
+	logger.Infof("GetFreqCorrection: %d", freqCorr)
 	err = u.dev.SetFreqCorrection(freqCorr)
 	if err != nil {
 		u.dev.Close()
-		logger.Infof("\tSetFreqCorrection %d Failed, error: %s\n", freqCorr, err)
+		logger.Infof("SetFreqCorrection %d Failed, error: %s", freqCorr, err)
 		return
 	}
-	logger.Infof("\tSetFreqCorrection %d Successful\n", freqCorr)
+	logger.Infof("SetFreqCorrection %d Successful", freqCorr)
 
 	return
 }
