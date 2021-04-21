@@ -180,7 +180,7 @@ Create 1GB file containing 0xFF:
 
 Start sending data. For our setup, the best result was received using high gain, antenna power, RX/TX amplifier, and a sample rate of 4MHz using this command (make sure your antenna length etc. can handle this to prevent damage):
 
-    hackrf_transfer -t FF.bin -f [frequency] -x 47 -l 40 -g 42 -p 1 -a 1 -s 4
+    hackrf_transfer -t FF.bin -f [frequency] -x 47 -l 40 -g 62 -p 1 -a 1 -s 4
 
 After starting the HackRF, the rtl_sdr command can be used to check the result of sending interfering data:
  
