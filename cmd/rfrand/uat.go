@@ -112,6 +112,19 @@ func (u *UAT) read() {
 			}
 			
 			if *flagWriteFile != "" {
+				if *flagMaxFileSize > 0 {
+					if int(numBytesTotal) >= *flagMaxFileSize {
+						current := numBytesTotal-int64(n)
+						free := int64(*flagMaxFileSize) - current
+						_, err = dumpFile.Write(b[:free])
+						if err != nil {
+							log.Fatal(err)
+						}
+						u.shutdown()
+						fmt.Println("done! captured", current+free, "bytes")
+						os.Exit(0)
+					}
+				}
 				_, err = dumpFile.Write(b[:n])
 				if err != nil {
 					log.Fatal(err)
