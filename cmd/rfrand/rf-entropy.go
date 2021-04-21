@@ -16,8 +16,7 @@ var logger *zap.SugaredLogger
 
 func main() {
 
-	println(`
-              
+	println(`              
          ( ( o ) ) 
             /   
            /___                    _________

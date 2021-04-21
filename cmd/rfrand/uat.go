@@ -121,7 +121,7 @@ func (u *UAT) read() {
 							log.Fatal(err)
 						}
 						u.shutdown()
-						fmt.Println("done! captured", current+free, "bytes")
+						fmt.Println("done! captured", current+free, "bytes in", time.Since(start))
 						os.Exit(0)
 					}
 				}
