@@ -68,10 +68,10 @@ func main() {
 			"-" + strconv.FormatFloat((1.0 - (float64(s.BytesOut)/float64(s.BytesIn))) * 100, 'f', 2, 64) + "%",
 			
 			// input bytes per second
-			humanize.Bytes(uint64(s.BytesIn / int(s.Duration.Milliseconds() / 1000))) + "/s",
+			humanize.Bytes(uint64(float64(s.BytesIn) / float64(s.Duration.Milliseconds() / 1000))) + "/s",
 
 			// input bytes per second
-			humanize.Bytes(uint64(s.BytesOut / int(s.Duration.Milliseconds() / 1000))) + "/s",
+			humanize.Bytes(uint64(float64(s.BytesOut) / float64(s.Duration.Milliseconds() / 1000))) + "/s",
 		})	
 		if err != nil {
 			log.Fatal(err)
