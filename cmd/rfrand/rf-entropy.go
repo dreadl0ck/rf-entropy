@@ -3,6 +3,8 @@ package main
 import (
 	"errors"
 	"flag"
+	"fmt"
+	"os"
 
 	"go.uber.org/zap"
 
@@ -37,7 +39,8 @@ __/    /_/   /__/    \__,_/ /_/ /_/\__,_/
 
 	//---------- Device Check ----------
 	if c := rtl.GetDeviceCount(); c == 0 {
-		logger.Fatal("No devices found, exiting.")
+		fmt.Println("No devices found, exiting.")
+		os.Exit(0)
 	} else {
 		for i := 0; i < c; i++ {
 			m, p, s, err := rtl.GetDeviceUsbStrings(i)

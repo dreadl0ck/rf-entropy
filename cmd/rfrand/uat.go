@@ -20,7 +20,9 @@ import (
 
 var (
 	dumpFile *os.File
+	rawFile *os.File
 	errDumpFile error
+	errRawFile error
 )
 
 // UAT holds a device context.
@@ -58,6 +60,13 @@ func (u *UAT) read() {
 		dumpFile, errDumpFile = os.Create(*flagWriteFile)
 		if errDumpFile != nil {
 			log.Fatal(errDumpFile)
+		}
+	}
+	if *flagWriteRaw {
+		fmt.Println("Writing into raw file:", *flagWriteFile + ".raw")
+		rawFile, errRawFile = os.Create(*flagWriteFile + ".raw")
+		if errRawFile != nil {
+			log.Fatal(errRawFile)
 		}
 	}
 
@@ -162,6 +171,13 @@ func (u *UAT) read() {
 			// populate buffer
 			buf.Write(buffer[:nRead])
 
+			if *flagWriteRaw {
+				_, err = rawFile.Write(buffer[:nRead])
+				if err != nil {
+					log.Fatal(err)
+				}
+			}
+
 			//fmt.Printf("\rnRead %d: readCnt: %d", nRead, readCnt)
 			readCnt++
 		}
@@ -176,6 +192,20 @@ func (u *UAT) shutdown() {
 	logger.Debug("UAT shutdown(): calling uatWG.Wait() ...")
 	u.wg.Wait() // Wait for the goroutine to shutdown
 	logger.Debug("UAT shutdown(): uatWG.Wait() returned...")
+	fmt.Println() // add newline
+	// close file handles
+	if dumpFile != nil {
+		errDumpFile = dumpFile.Close()
+		if errDumpFile != nil {
+			log.Fatal(errDumpFile)
+		}
+	}
+	if rawFile != nil {
+		errRawFile = rawFile.Close()
+		if errRawFile != nil {
+			log.Fatal(errRawFile)
+		}
+	}
 }
 
 // sdrConfig configures the device to 978 MHz UAT channel.
@@ -291,15 +321,13 @@ func (u *UAT) sdrConfig(indexID int) (err error) {
 
 // sigAbort
 func (u *UAT) sigAbort() {
+	
+	// setup signal channel
 	ch := make(chan os.Signal)
 	signal.Notify(ch, syscall.SIGINT)
 	<-ch
+	
 	u.shutdown()
-	fmt.Println() // add newline
-	errDumpFile = dumpFile.Close()
-	if errDumpFile != nil {
-		log.Fatal(errDumpFile)
-	}
 	os.Exit(0)
 }
 
