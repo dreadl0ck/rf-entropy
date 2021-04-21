@@ -87,13 +87,13 @@ func (u *UAT) read() {
 			numBytes += int64(n)
 			numBytesTotal += int64(n)
 
-			entropy := debias.ShannonEntropy(b[:n])
+			e := entropy(b[:n])
 			if *flagEntropyGuard != 0 {
-				if entropy < *flagEntropyGuard {
+				if e < float64(*flagEntropyGuard) {
 					if lastBlockOkay {
-						fmt.Println("\n[entropy-guard] insufficient entropy detected, discarding data block:", entropy)
+						fmt.Println("\n[entropy-guard] insufficient entropy detected, discarding data block:", e)
 					} else {
-						fmt.Println("[entropy-guard] insufficient entropy detected, discarding data block:", entropy)
+						fmt.Println("[entropy-guard] insufficient entropy detected, discarding data block:", e)
 					}
 
 					if *flagHexDump {
@@ -123,7 +123,8 @@ func (u *UAT) read() {
 				pad(humanize.Bytes(uint64(float64(numBytes)/(float64(time.Since(windowStart).Milliseconds()) / float64(1000.0))))+ "/s   ", 7),
 				pad(humanize.Bytes(uint64(numBytesTotal)), 7),
 				"   ",
-				pad(strconv.Itoa(entropy), 7),
+				//pad(strconv.Itoa(e), 7),
+				pad(strconv.FormatFloat(e, 'f', 2, 64), 7),
 				"     ",
 				time.Since(start),
 			)

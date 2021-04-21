@@ -148,7 +148,9 @@ https://pthree.org/2015/06/16/hardware-rng-through-an-rtl-sdr-dongle/
 
 http://www.aaronscher.com/wireless_com_SDR/RTL_SDR_AM_spectrum_demod.html
 
-e.g.: rtl_sdr -f 433920000 -g 10 -s 2500000 -n 25000000 random.bin
+e.g.: 
+
+    rtl_sdr -f 433920000 -g 10 -s 2500000 -n 25000000 random.bin
 
 ## Validate
 
@@ -172,23 +174,23 @@ WARNING: Please note that sending on certain frequencies is forbidden by law and
 
 Create 1GB file containing 0xFF:
 
-printf '%.s\xff' {1..10000000} > temp.bin
+    printf '%.s\xff' {1..10000000} > temp.bin
 
-for i in {1..100}; do cat temp.bin; done > FF.bin
+    for i in {1..100}; do cat temp.bin; done > FF.bin
 
 Start sending data. For our setup, the best result was received using high gain, antenna power, RX/TX amplifier, and a sample rate of 4MHz using this command (make sure your antenna length etc. can handle this to prevent damage):
 
-hackrf_transfer -t FF.bin -f [frequency] -x 47 -l 40 -g 42 -p 1 -a 1 -s 4
+    hackrf_transfer -t FF.bin -f [frequency] -x 47 -l 40 -g 42 -p 1 -a 1 -s 4
 
 After starting the HackRF, the rtl_sdr command can be used to check the result of sending interfering data:
  
-rtl_sdr -f [frequency]  -s 2500000 -n 50000000 10M_interf_random.bin 
+    rtl_sdr -f [frequency]  -s 2500000 -n 50000000 10M_interf_random.bin 
 
 A quick compression of the output gives an indication of the entropy. 
 
 ## Run Von Neumann Debiasing
 
-    go run debias.go
+    go run cmd/debias/debias.go
 
 # Frequencies
 
@@ -201,18 +203,18 @@ A quick compression of the output gives an indication of the entropy.
 - 1559 MHz (GNSS: Glonass, Galileo)
 - 2200 MHz (Space research, Radio Astronomy)
 
-## rf-entropy tool
+## rfrand tool
 
 Compile
 
     mkdir bin
-    go build -o bin/rf-entropy cmd/*.go
+    go build -o bin/rfrand cmd/rfrand/*.go
 
 ### Compile and run
 
 Help:
 
-    go run cmd/*.go -h
+    go run cmd/rfrand/*.go -h
         -b int
             bandwidth (default 1000000)
         -c int
@@ -235,20 +237,16 @@ Help:
 
 Run Von Neumann at default frequency:
 
-    go run cmd/*.go
+    go run cmd/rfrand/*.go
 
 Run Von Neumann at specific frequency (eg: 74 MHz):
 
-    go run cmd/*.go -f 74000000
+    go run cmd/rfrand/*.go -f 74000000
 
 Run Von Neumann and save resulting bytes to file _out.bin_:
 
-    go run cmd/*.go -f 74000000 -w out.bin
+    go run cmd/rfrand/*.go -f 74000000 -w out.bin
 
 Run Kaminsky debiasing:
 
-    go run cmd/*.go -k
-
-- TODO check entropy to prevent attacks
-    -   block data output if entropy drops below threshold
-- fetch data from /dev/random and mix it in to achiece higher data rate
+    go run cmd/rfrand/*.go -k
