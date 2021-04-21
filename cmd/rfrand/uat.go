@@ -243,6 +243,8 @@ func (u *UAT) sdrConfig(indexID int) (err error) {
 	logger.Debugf("SetCenterFreq Successful")
 
 	logger.Debugf("GetCenterFreq: %d", u.dev.GetCenterFreq())
+	
+	fmt.Println("Frequency: ", *flagFrequency, "Hz")
 
 	// ---------- Set Bandwidth ----------
 	logger.Debugf("Setting Bandwidth: %d", *flagBandwidth)
