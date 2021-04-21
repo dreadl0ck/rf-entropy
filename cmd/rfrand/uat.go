@@ -54,6 +54,7 @@ func (u *UAT) read() {
 	}
 
 	if *flagWriteFile != "" {
+		fmt.Println("Writing into file:", *flagWriteFile)
 		dumpFile, errDumpFile = os.Create(*flagWriteFile)
 		if errDumpFile != nil {
 			log.Fatal(errDumpFile)
@@ -278,9 +279,9 @@ func (u *UAT) sigAbort() {
 	signal.Notify(ch, syscall.SIGINT)
 	<-ch
 	u.shutdown()
+	fmt.Println() // add newline
 	errDumpFile = dumpFile.Close()
 	if errDumpFile != nil {
-		fmt.Println() // add newline
 		log.Fatal(errDumpFile)
 	}
 	os.Exit(0)
