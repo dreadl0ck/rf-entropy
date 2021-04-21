@@ -12,6 +12,8 @@ github.com/dreadl0ck/debias v0.1.1-0.20210420113905-b8d23cbcfce5 h1:4sDfbHMuLYxZ
 github.com/dreadl0ck/debias v0.1.1-0.20210420113905-b8d23cbcfce5/go.mod h1:f5k8Wx8I0rPIuujmMuVOSDLywlMS4gT7t7ERkiZt8Rk=
 github.com/dreadl0ck/debias v0.2.0 h1:2Hp9JeEibT2m8YiQyZy35fdZechCuDq0G5uzjGnsOAI=
 github.com/dreadl0ck/debias v0.2.0/go.mod h1:f5k8Wx8I0rPIuujmMuVOSDLywlMS4gT7t7ERkiZt8Rk=
+github.com/dreadl0ck/debias v0.2.1-0.20210421121836-10121a86ae70 h1:eynwZtzo6PU0ogRXUKtxSFkYZBCx2yIHDSCm/yv5a2k=
+github.com/dreadl0ck/debias v0.2.1-0.20210421121836-10121a86ae70/go.mod h1:f5k8Wx8I0rPIuujmMuVOSDLywlMS4gT7t7ERkiZt8Rk=
 github.com/dustin/go-humanize v1.0.0 h1:VSnTsYCnlFHaM2/igO1h6X3HA71jcobQuxemgkq4zYo=
 github.com/dustin/go-humanize v1.0.0/go.mod h1:HtrtbFcZ19U5GC7JDqmcUSB87Iq5E25KnS6fMYU6eOk=
 github.com/google/renameio v0.1.0/go.mod h1:KWCgfxg9yswjAJkECMjeO8J8rahYeXnNhOm40UhjYkI=

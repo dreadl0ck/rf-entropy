@@ -240,3 +240,7 @@ Run Von Neumann and save resulting bytes to file _out.bin_:
 Run Kaminsky debiasing:
 
     go run cmd/*.go -k
+
+- TODO check entropy to prevent attacks
+    -   block data output if entropy drops below threshold
+- fetch data from /dev/random and mix it in to achiece higher data rate
