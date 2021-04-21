@@ -18,4 +18,5 @@ var (
 	flagWriteFile = flag.String("w", "", "write into file")
 	flagMaxChunkSize = flag.Int("c", 1024 * 1024, "max chunk size")
 	flagRateInterval = flag.Duration("i", 3 * time.Second, "rate interval")
+	flagEntropyGuard = flag.Int("e", 0, "entropy guard")
 )

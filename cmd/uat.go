@@ -8,6 +8,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"syscall"
 	"time"
@@ -45,8 +46,10 @@ func (u *UAT) read() {
 	debias.MaxChunkSize = *flagMaxChunkSize
 
 	if *flagKaminsky {
+		fmt.Println("using Kaminsky debiasing")
 		out, _, _ = debias.Kaminsky(&buf, true, int64(debias.MaxChunkSize))
 	} else {
+		fmt.Println("using Von Neumann debiasing")
 		out, _, _ = debias.VonNeumann(&buf, true)
 	}
 
@@ -57,7 +60,10 @@ func (u *UAT) read() {
 		}
 	}
 
-	fmt.Println("Rate      ", "Total   ", "Entropy  ", "Duration")
+	fmt.Println()
+	fmt.Println("==================================================")
+	fmt.Println("Rate      ", "Total    ", "Entropy    ", "Duration")
+	fmt.Println("==================================================")
 
 	go func() {
 
@@ -67,6 +73,8 @@ func (u *UAT) read() {
 			n   int
 			numBytes int64
 			numBytesTotal  int64
+			lastBlockOkay bool
+			windowStart = time.Now()
 		)
 		for {
 			n, err = out.Read(b)
@@ -78,9 +86,32 @@ func (u *UAT) read() {
 			numBytes += int64(n)
 			numBytesTotal += int64(n)
 
+			entropy := debias.ShannonEntropy(b[:n])
+			if *flagEntropyGuard != 0 {
+				if entropy < *flagEntropyGuard {
+					if lastBlockOkay {
+						fmt.Println("\n[entropy-guard] insufficient entropy detected, discarding data block:", entropy)
+					} else {
+						fmt.Println("[entropy-guard] insufficient entropy detected, discarding data block:", entropy)
+					}
+
+					if *flagHexDump {
+						fmt.Println(hex.Dump(b[:n]))
+						u.shutdown()
+						os.Exit(0)
+					}
+					
+					lastBlockOkay = false
+					continue
+				} else {
+					lastBlockOkay = true
+				}
+			}
+
 			if *flagHexDump {
 				fmt.Println(hex.Dump(b[:n]))
 			}
+			
 			if *flagWriteFile != "" {
 				_, err = dumpFile.Write(b[:n])
 				if err != nil {
@@ -88,21 +119,19 @@ func (u *UAT) read() {
 				}
 			}
 
-			if numBytes != 0 {
-				clearLine()
-				fmt.Print(
-					humanize.Bytes(uint64(float64(numBytes)/(float64(time.Since(start).Milliseconds()) / float64(1000.0))))+ "/s   ",
-					humanize.Bytes(uint64(numBytesTotal)),
-					"   ",
-					debias.ShannonEntropy(b[:n]),
-					"    ",
-					time.Since(start),
-				)
-			}
+			clearLine()
+			fmt.Print(
+				pad(humanize.Bytes(uint64(float64(numBytes)/(float64(time.Since(windowStart).Milliseconds()) / float64(1000.0))))+ "/s   ", 7),
+				pad(humanize.Bytes(uint64(numBytesTotal)), 7),
+				"   ",
+				pad(strconv.Itoa(entropy), 7),
+				"     ",
+				time.Since(start),
+			)
 
 			// reset start and numBytes for average data rate calculation
-			if time.Since(start) > *flagRateInterval {
-				start = time.Now()
+			if time.Since(windowStart) > *flagRateInterval {
+				windowStart = time.Now()
 				numBytes = 0
 			}
 		}
@@ -259,6 +288,3 @@ func (u *UAT) sigAbort() {
 	os.Exit(0)
 }
 
-func clearLine() {
-	print("\033[2K\r")
-}
