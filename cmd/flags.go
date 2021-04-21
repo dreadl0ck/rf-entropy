@@ -1,6 +1,9 @@
 package main
 
-import "flag"
+import (
+	"flag"
+	"time"
+)
 
 var (
 	flagKaminsky  = flag.Bool("k", false, "use kaminsky mode")
@@ -13,5 +16,6 @@ var (
 
 	flagHexDump = flag.Bool("hex", false, "hexdump")
 	flagWriteFile = flag.String("w", "", "write into file")
-	flagMaxChunkSize = flag.Int("c", 1024, "max chunk size")
+	flagMaxChunkSize = flag.Int("c", 1024 * 1024, "max chunk size")
+	flagRateInterval = flag.Duration("i", 3 * time.Second, "rate interval")
 )

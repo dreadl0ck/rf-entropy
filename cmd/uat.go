@@ -4,9 +4,6 @@ import (
 	"bytes"
 	"encoding/hex"
 	"fmt"
-	"github.com/dreadl0ck/debias"
-	"github.com/dustin/go-humanize"
-	rtl "github.com/jpoirier/gortlsdr"
 	"io"
 	"log"
 	"os"
@@ -14,6 +11,10 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/dreadl0ck/debias"
+	"github.com/dustin/go-humanize"
+	rtl "github.com/jpoirier/gortlsdr"
 )
 
 var (
@@ -44,7 +45,7 @@ func (u *UAT) read() {
 	debias.MaxChunkSize = *flagMaxChunkSize
 
 	if *flagKaminsky {
-		out, _, _ = debias.Kaminsky(&buf, true, 1024)
+		out, _, _ = debias.Kaminsky(&buf, true, int64(debias.MaxChunkSize))
 	} else {
 		out, _, _ = debias.VonNeumann(&buf, true)
 	}
@@ -56,7 +57,7 @@ func (u *UAT) read() {
 		}
 	}
 
-	fmt.Println("Rate      ", "Total   ", "Entropy", "Duration")
+	fmt.Println("Rate      ", "Total   ", "Entropy  ", "Duration")
 
 	go func() {
 
@@ -65,6 +66,7 @@ func (u *UAT) read() {
 			err error
 			n   int
 			numBytes int64
+			numBytesTotal  int64
 		)
 		for {
 			n, err = out.Read(b)
@@ -74,6 +76,7 @@ func (u *UAT) read() {
 			}
 
 			numBytes += int64(n)
+			numBytesTotal += int64(n)
 
 			if *flagHexDump {
 				fmt.Println(hex.Dump(b[:n]))
@@ -88,13 +91,19 @@ func (u *UAT) read() {
 			if numBytes != 0 {
 				clearLine()
 				fmt.Print(
-					humanize.Bytes(uint64(float64(numBytes)/float64(time.Since(start).Milliseconds() / 1000.0)))+ "/s   ",
-					humanize.Bytes(uint64(numBytes)),
+					humanize.Bytes(uint64(float64(numBytes)/(float64(time.Since(start).Milliseconds()) / float64(1000.0))))+ "/s   ",
+					humanize.Bytes(uint64(numBytesTotal)),
 					"   ",
 					debias.ShannonEntropy(b[:n]),
 					"    ",
 					time.Since(start),
 				)
+			}
+
+			// reset start and numBytes for average data rate calculation
+			if time.Since(start) > *flagRateInterval {
+				start = time.Now()
+				numBytes = 0
 			}
 		}
 	}()

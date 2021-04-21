@@ -60,18 +60,18 @@ func main() {
 	for _, s := range stats {
 		err = w.Write([]string{
 			s.FileName,
-			strconv.Itoa(s.BytesIn),
-			strconv.Itoa(s.BytesOut),
+			strconv.FormatInt(s.BytesIn, 10),
+			strconv.FormatInt(s.BytesOut, 10),
 			s.Duration.String(),
 			
 			// size decrease in percent
 			"-" + strconv.FormatFloat((1.0 - (float64(s.BytesOut)/float64(s.BytesIn))) * 100, 'f', 2, 64) + "%",
 			
 			// input bytes per second
-			humanize.Bytes(uint64(float64(s.BytesIn) / float64(s.Duration.Milliseconds() / 1000))) + "/s",
+			humanize.Bytes(uint64(float64(s.BytesIn) / (float64(s.Duration.Milliseconds() / 1000.0)))) + "/s",
 
 			// input bytes per second
-			humanize.Bytes(uint64(float64(s.BytesOut) / float64(s.Duration.Milliseconds() / 1000))) + "/s",
+			humanize.Bytes(uint64(float64(s.BytesOut) / (float64(s.Duration.Milliseconds() / 1000.0)))) + "/s",
 		})	
 		if err != nil {
 			log.Fatal(err)
