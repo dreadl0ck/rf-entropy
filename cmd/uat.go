@@ -97,8 +97,6 @@ func (u *UAT) read() {
 
 					if *flagHexDump {
 						fmt.Println(hex.Dump(b[:n]))
-						u.shutdown()
-						os.Exit(0)
 					}
 					
 					lastBlockOkay = false
