@@ -3,7 +3,6 @@ package main
 import (
 	"errors"
 	"flag"
-	"fmt"
 
 	"go.uber.org/zap"
 
@@ -16,6 +15,17 @@ import (
 var logger *zap.SugaredLogger
 
 func main() {
+
+	println(`
+              
+         ( ( o ) ) 
+            /   
+           /___                    _________
+ ________ / __/ ___________ _____________  /
+ /  ___/_/ /_ _/  ___/  __  /_  __ \  __  / 
+/  /  __  __/    /   / /_/ /_  / / / /_/ /  
+__/    /_/   /__/    \__,_/ /_/ /_/\__,_/   
+	`)
 
 	flag.Parse()
 
@@ -35,12 +45,12 @@ func main() {
 			if err == nil {
 				err = errors.New("")
 			}
-			logger.Infof("GetDeviceUsbStrings %s - %s %s %s\n", err, m, p, s)
+			logger.Debugf("GetDeviceUsbStrings %s - %s %s %s\n", err, m, p, s)
 		}
 	}
 	indexID := 0
-	logger.Infof("===== Device name: %s =====", rtl.GetDeviceName(indexID))
-	logger.Infof("===== Running tests using device indx: 0 =====")
+	logger.Debugf("===== Device name: %s =====", rtl.GetDeviceName(indexID))
+	logger.Debugf("===== Running tests using device indx: 0 =====")
 
 	uatDev := &UAT{}
 	if err := uatDev.sdrConfig(indexID); err != nil {
@@ -48,7 +58,7 @@ func main() {
 	}
 	uatDev.wg = &sync.WaitGroup{}
 	uatDev.wg.Add(1)
-	fmt.Printf("\n======= CTRL+C to exit... =======\n\n")
+	logger.Debugf("\n======= CTRL+C to exit... =======\n\n")
 	go uatDev.read()
 	uatDev.sigAbort()
 }
