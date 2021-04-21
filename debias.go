@@ -5,6 +5,7 @@ import (
 	"flag"
 	"log"
 	"os"
+	"path/filepath"
 	"strconv"
 
 	"github.com/dreadl0ck/debias"
@@ -27,10 +28,10 @@ func main() {
 	)
 	if *flagKaminsky {
 		mode = debias.ModeKaminsky
-		statsFile = "stats-" + *flagPath + "-km.csv"
+		statsFile = filepath.Dir(*flagPath) + "/stats-" + filepath.Base(*flagPath) + "-kaminsky.csv"
 	} else {
 		mode = debias.ModeVonNeumann
-		statsFile = "stats-" + *flagPath + "-vn.csv"
+		statsFile = filepath.Dir(*flagPath) + "/stats-" + filepath.Base(*flagPath) + "-neumann.csv"
 	}
 
 	stats := debias.Directory(*flagPath, *flagExt, mode)
