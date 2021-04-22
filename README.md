@@ -182,11 +182,20 @@ Start sending data. For our setup, the best result was received using high gain,
 
     hackrf_transfer -t FF.bin -f [frequency] -x 47 -l 40 -g 62 -p 1 -a 1 -s 4
 
+Variations for different bit patterns:
+
+    hackrf_transfer -t 01010101.bin -f 433920000 -x 47 -l 40 -g 62 -p 1 -a 1
+    hackrf_transfer -t 10011001.bin -f 433920000 -x 47 -l 40 -g 62 -p 1 -a 1
+
 After starting the HackRF, the rtl_sdr command can be used to check the result of sending interfering data:
  
     rtl_sdr -f [frequency]  -s 2500000 -n 50000000 10M_interf_random.bin 
 
 A quick compression of the output gives an indication of the entropy. 
+
+Or use binwalk to render a plot:
+
+    binwalk -E <file>
 
 ## Run Von Neumann Debiasing
 
