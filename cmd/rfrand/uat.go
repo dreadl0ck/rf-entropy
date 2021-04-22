@@ -62,9 +62,10 @@ func (u *UAT) read() {
 			log.Fatal(errDumpFile)
 		}
 	}
-	if *flagWriteRaw {
-		fmt.Println("Writing into raw file:", *flagWriteFile + ".raw")
-		rawFile, errRawFile = os.Create(*flagWriteFile + ".raw")
+	if *flagWriteRawInput {
+		file := "input.bin"
+		fmt.Println("Writing into raw file:", file)
+		rawFile, errRawFile = os.Create(file)
 		if errRawFile != nil {
 			log.Fatal(errRawFile)
 		}
@@ -191,7 +192,7 @@ func (u *UAT) read() {
 			// populate buffer
 			buf.Write(buffer[:nRead])
 
-			if *flagWriteRaw {
+			if *flagWriteRawInput {
 				_, err = rawFile.Write(buffer[:nRead])
 				if err != nil {
 					log.Fatal(err)

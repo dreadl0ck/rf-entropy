@@ -23,6 +23,6 @@ var (
 	flagEntropyGuard = flag.Int("e", 5, "entropy guard")
 
 	flagMaxFileSize = flag.Int("size", 0, "max file size (default unlimited)")
-	flagWriteRaw = flag.Bool("raw", false, "write raw data into file")
+	flagWriteRawInput = flag.Bool("raw", false, "write raw input data into file")
 	flagInputRate = flag.Bool("input-rate", false, "show input data rate instead of output data rate")
 )
