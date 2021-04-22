@@ -103,6 +103,11 @@ func (u *UAT) read() {
 				value: e,
 				time: t,
 			})
+			r := float64(numBytes)/(float64(time.Since(windowStart).Milliseconds()) / float64(1000.0))
+			outputRates = append(outputRates, &measurement{
+				value: r,
+				time: t,
+			})
 			
 			if *flagEntropyGuard != 0 {
 				if e < float64(*flagEntropyGuard) {
@@ -148,15 +153,9 @@ func (u *UAT) read() {
 			}
 
 			if !*flagInputRate {
-				r := float64(numBytes)/(float64(time.Since(windowStart).Milliseconds()) / float64(1000.0))
-				outputRates = append(outputRates, &measurement{
-					value: r,
-					time: t,
-				})
 				clearLine()
-				
 				fmt.Print(
-					pad(humanize.Bytes(uint64(r))+ "/s   ", 7),
+					pad(humanize.Bytes(uint64(r))+ "/s", 11),
 					pad(humanize.Bytes(uint64(numBytesTotal)), 7),
 					"   ",
 					pad(strconv.FormatFloat(e, 'f', 2, 64), 7),
@@ -218,7 +217,7 @@ func (u *UAT) read() {
 			if *flagInputRate {
 				clearLine()
 				fmt.Print(
-					pad(humanize.Bytes(uint64(float64(numBytesRaw)/(float64(time.Since(rawBytesWindowStart).Milliseconds()) / float64(1000.0))))+ "/s   ", 7),
+					pad(humanize.Bytes(uint64(float64(numBytesRaw)/(float64(time.Since(rawBytesWindowStart).Milliseconds()) / float64(1000.0))))+ "/s", 11),
 					pad(humanize.Bytes(uint64(numBytesRawTotal)), 7),
 					"   ",
 					pad(strconv.FormatFloat(e, 'f', 2, 64), 7),
