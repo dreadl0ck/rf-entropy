@@ -90,24 +90,24 @@ func saveChart(name string, graph chart.Chart) {
 	buffer := bytes.NewBuffer([]byte{})
 	err := graph.Render(chart.PNG, buffer)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(name, ": failed to render chart:", err)
 	}
 
 	// create file
 	f, err := os.Create(name)
 	if err != nil {
-		log.Fatal(err)
+		log.Println(name, ": failed to create chart file:", err)
 	}
 
 	// write buf
 	_, err = f.Write(buffer.Bytes())
 	if err != nil {
-		log.Fatal(err)
+		log.Println(name, ": failed to write chart:", err)
 	}
 
 	// close handle
 	err = f.Close()
 	if err != nil {
-		log.Fatal(err)
+		log.Println(name, ": failed to close chart file:", err)
 	}
 }
