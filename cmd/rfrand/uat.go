@@ -69,6 +69,7 @@ func (u *UAT) read() {
 			log.Fatal(errRawFile)
 		}
 	}
+	fmt.Println("Chunk Size:", humanize.Bytes(uint64(*flagMaxChunkSize)))
 
 	fmt.Println()
 	fmt.Println("==================================================")
@@ -96,7 +97,13 @@ func (u *UAT) read() {
 			numBytes += int64(n)
 			numBytesTotal += int64(n)
 
+			t := time.Now()
 			e := entropy(b[:n])
+			outputEntropy = append(outputEntropy, &measurement{
+				value: e,
+				time: t,
+			})
+			
 			if *flagEntropyGuard != 0 {
 				if e < float64(*flagEntropyGuard) {
 					if lastBlockOkay {
@@ -140,16 +147,23 @@ func (u *UAT) read() {
 				}
 			}
 
-			clearLine()
-			fmt.Print(
-				pad(humanize.Bytes(uint64(float64(numBytes)/(float64(time.Since(windowStart).Milliseconds()) / float64(1000.0))))+ "/s   ", 7),
-				pad(humanize.Bytes(uint64(numBytesTotal)), 7),
-				"   ",
-				//pad(strconv.Itoa(e), 7),
-				pad(strconv.FormatFloat(e, 'f', 2, 64), 7),
-				"     ",
-				time.Since(start),
-			)
+			if !*flagInputRate {
+				r := float64(numBytes)/(float64(time.Since(windowStart).Milliseconds()) / float64(1000.0))
+				outputRates = append(outputRates, &measurement{
+					value: r,
+					time: t,
+				})
+				clearLine()
+				
+				fmt.Print(
+					pad(humanize.Bytes(uint64(r))+ "/s   ", 7),
+					pad(humanize.Bytes(uint64(numBytesTotal)), 7),
+					"   ",
+					pad(strconv.FormatFloat(e, 'f', 2, 64), 7),
+					"     ",
+					time.Since(start),
+				)
+			}
 
 			// reset start and numBytes for average data rate calculation
 			if time.Since(windowStart) > *flagRateInterval {
@@ -159,12 +173,19 @@ func (u *UAT) read() {
 		}
 	}()
 
+	var (
+		numBytesRaw int64
+		numBytesRawTotal int64
+		rawBytesWindowStart = time.Now()
+	)
+
 	for {
 		nRead, err := u.dev.ReadSync(buffer, rtl.DefaultBufLength)
 		if err != nil {
 			logger.Debugf("ReadSync Failed - error: %s", err)
 			break
 		}
+		
 		// logger.Debugf("ReadSync %d", nRead)
 		if nRead > 0 {
 
@@ -175,6 +196,40 @@ func (u *UAT) read() {
 				_, err = rawFile.Write(buffer[:nRead])
 				if err != nil {
 					log.Fatal(err)
+				}
+			}
+
+			numBytesRaw += int64(nRead)
+			numBytesRawTotal += int64(nRead)
+			
+			t := time.Now()
+			e := entropy(buffer[:nRead])
+			inputEntropy = append(inputEntropy, &measurement{
+				value: e,
+				time: t,
+			})
+			
+			r := float64(numBytesRaw)/(float64(time.Since(rawBytesWindowStart).Milliseconds()) / float64(1000.0))
+			inputRates = append(inputRates, &measurement{
+				value: r,
+				time: t,
+			})
+			
+			if *flagInputRate {
+				clearLine()
+				fmt.Print(
+					pad(humanize.Bytes(uint64(float64(numBytesRaw)/(float64(time.Since(rawBytesWindowStart).Milliseconds()) / float64(1000.0))))+ "/s   ", 7),
+					pad(humanize.Bytes(uint64(numBytesRawTotal)), 7),
+					"   ",
+					pad(strconv.FormatFloat(e, 'f', 2, 64), 7),
+					"     ",
+					time.Since(start),
+				)
+	
+				// reset start and numBytes for average data rate calculation
+				if time.Since(rawBytesWindowStart) > *flagRateInterval {
+					rawBytesWindowStart = time.Now()
+					numBytesRaw = 0
 				}
 			}
 
@@ -206,6 +261,11 @@ func (u *UAT) shutdown() {
 			log.Fatal(errRawFile)
 		}
 	}
+
+	makePlot("input-rates.png", inputRates, "time", "rate", true)
+	makePlot("output-rates.png", outputRates, "time", "rate", true)
+	makePlot("input-entropy.png", inputEntropy, "time", "entropy", false)
+	makePlot("output-entropy.png", outputEntropy, "time", "entropy", false)
 }
 
 // sdrConfig configures the device to 978 MHz UAT channel.

@@ -17,11 +17,12 @@ var (
 	flagHexDump = flag.Bool("hex", false, "hexdump")
 	flagWriteFile = flag.String("w", "", "write into file")
 
-	flagMaxChunkSize = flag.Int("c", 1024 * 1024, "max chunk size")
-	flagRateInterval = flag.Duration("i", 3 * time.Second, "rate interval")
+	flagMaxChunkSize = flag.Int("c", 1024 * 100, "max chunk size")
+	flagRateInterval = flag.Duration("i", 5 * time.Second, "rate interval")
 	
 	flagEntropyGuard = flag.Int("e", 5, "entropy guard")
 
 	flagMaxFileSize = flag.Int("size", 0, "max file size (default unlimited)")
 	flagWriteRaw = flag.Bool("raw", false, "write raw data into file")
+	flagInputRate = flag.Bool("input-rate", false, "show input data rate instead of output data rate")
 )
