@@ -262,10 +262,10 @@ func (u *UAT) shutdown() {
 		}
 	}
 
-	makePlot("input-rates.png", inputRates, "time", "rate", true)
-	makePlot("output-rates.png", outputRates, "time", "rate", true)
-	makePlot("input-entropy.png", inputEntropy, "time", "entropy", false)
-	makePlot("output-entropy.png", outputEntropy, "time", "entropy", false)
+	makeChart("input-rates.png", inputRates, "time", "rate", true)
+	makeChart("output-rates.png", outputRates, "time", "rate", true)
+	makeChart("input-entropy.png", inputEntropy, "time", "entropy", false)
+	makeChart("output-entropy.png", outputEntropy, "time", "entropy", false)
 }
 
 // sdrConfig configures the device to 978 MHz UAT channel.
