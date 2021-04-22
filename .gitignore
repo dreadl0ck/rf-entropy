@@ -3,3 +3,4 @@ truncated-samples.zip
 *.bin
 *.raw
 *.png
+!img/*.png
